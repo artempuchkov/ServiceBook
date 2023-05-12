@@ -12,6 +12,7 @@ public class AddUser : Migration
 
 		Create.Table("user").
 			WithColumn("user_id").AsInt64().PrimaryKey().Identity().
+			WithColumn("user_code").AsString().NotNullable().
 
 			WithColumn("email").AsString().NotNullable().
 			WithColumn("confirm_email").AsBoolean().NotNullable().WithDefaultValue(false).

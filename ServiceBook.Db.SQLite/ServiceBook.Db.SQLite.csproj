@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Flurl" Version="3.0.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Db.SQLite.Migrations\Db.SQLite.Migrations.csproj" />
+    <ProjectReference Include="..\ServiceBook.EmailService\ServiceBook.EmailService.csproj" />
   </ItemGroup>
 
 </Project>

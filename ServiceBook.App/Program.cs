@@ -1,5 +1,6 @@
 using Db.SQLite.Migrations;
 using ServiceBook.Db.SQLite;
+using ServiceBook.EmailService;
 
 namespace ServiceBook.App;
 
@@ -18,6 +19,8 @@ public class Program
 
 		builder.Services.AddSingleton<IDbConnectionFactory, SQLiteDatabase>();
 		builder.Services.AddSingleton<IDataSource, SQLiteDataSource>();
+
+		builder.Services.AddSingleton<IEmailService, EmailService.EmailService>();
 
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 		builder.Services.AddEndpointsApiExplorer();

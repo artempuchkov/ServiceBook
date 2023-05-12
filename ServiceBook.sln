@@ -5,13 +5,15 @@ VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBook.App", "ServiceBook.App\ServiceBook.App.csproj", "{2EBEDBB1-7456-4E87-8C14-37FE3CCE5FAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Db.SQLite.Migrations", "Db.SQLite.Migrations\Db.SQLite.Migrations.csproj", "{3FB5AAD2-E4DC-4C31-92D7-CD3BF31FA199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Db.SQLite.Migrations", "Db.SQLite.Migrations\Db.SQLite.Migrations.csproj", "{3FB5AAD2-E4DC-4C31-92D7-CD3BF31FA199}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBook.Db.SQLite", "ServiceBook.Db.SQLite\ServiceBook.Db.SQLite.csproj", "{0F40B9B2-E555-432F-B710-0006112FE630}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBook.Db.SQLite", "ServiceBook.Db.SQLite\ServiceBook.Db.SQLite.csproj", "{0F40B9B2-E555-432F-B710-0006112FE630}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@Migrations", "@Migrations", "{F8312410-D894-4924-8CAF-323AA3185EA6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Db", "Db", "{EF2DAF00-7D03-4D29-9C0F-926DC1DE1F18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBook.EmailService", "ServiceBook.EmailService\ServiceBook.EmailService.csproj", "{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,10 @@ Global
 		{0F40B9B2-E555-432F-B710-0006112FE630}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F40B9B2-E555-432F-B710-0006112FE630}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F40B9B2-E555-432F-B710-0006112FE630}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
