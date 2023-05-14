@@ -6,8 +6,8 @@ namespace ServiceBook.EmailService;
 
 public class EmailService : IEmailService
 {
-	private string Email => "";
-	private string Password => "";
+	private string Email => "rav3develop@gmail.com";
+	private string Password => "2012Artem.2012";
 	private string Host => "smtp-mail.outlook.com";
 	private int Port => 587;
 
