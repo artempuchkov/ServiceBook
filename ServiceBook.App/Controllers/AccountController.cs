@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using ServiceBook.Db.SQLite;
 using Microsoft.AspNetCore.Mvc;
+using ServiceBook.Db.SQLite.Models;
 
 namespace ServiceBook.App.Controllers;
 
@@ -9,6 +10,7 @@ public class AccountController : ControllerBase
 {
 	private readonly IDataSource _dataSource;
 	private readonly ILogger<AccountController> _logger;
+	private const string AuthCookie = "AutoTechCentr";
 
 	public AccountController(IDataSource dataSource, ILogger<AccountController> logger)
 	{
@@ -95,5 +97,53 @@ public class AccountController : ControllerBase
 			_logger.LogError($"API: {Request.Path} || Status Code Response: 400 || Exception: {ex.Message}");
 			return BadRequest(errorMsg);
 		}
+	}
+
+	[HttpPost]
+	[Route("api/Account/SignIn")]
+	public async Task<IActionResult> SignIn([FromBody] LoginViewModel model)
+	{
+		try
+		{
+			if (!new Regex(@"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}").IsMatch(model.Email))
+				ModelState.AddModelError("", "Некорректный адрес электронной почты.");
+			if (string.IsNullOrEmpty(model.Password))
+				ModelState.AddModelError("", "Поле \"Пароль\" не заполнено.");
+			if (ModelState.IsValid)
+			{
+				var userCode = await _dataSource.SignIn(model);
+				Response.Cookies.Append(AuthCookie, userCode);
+				var Test = HttpContext.Request.Cookies[AuthCookie];
+
+                var msg = new
+				{
+					message = "Вход выполнен.",
+				};
+				return Ok(msg);
+			}
+			else
+			{
+				var errorMsg = new
+				{
+					message = "Вход не выполнен.",
+					error = ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))
+				};
+
+				_logger.LogError($"API: {Request.Path} || Status Code Response: 400 || Exception: {errorMsg.message}");
+				return BadRequest(errorMsg);
+			}
+		}
+		catch(Exception ex)
+		{
+            ModelState.AddModelError("", ex.Message);
+            var errorMsg = new
+            {
+                message = "Вход не выполнен.",
+                error = ModelState.Values.SelectMany(e => e.Errors.Select(er => er.ErrorMessage))
+            };
+
+            _logger.LogError($"API: {Request.Path} || Status Code Response: 400 || Exception: {ex.Message}");
+            return BadRequest(errorMsg);
+        }
 	}
 }

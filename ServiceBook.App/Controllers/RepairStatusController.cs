@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using MimeKit;
 using ServiceBook.Db.SQLite;
 
 namespace ServiceBook.App.Controllers;
@@ -9,8 +10,9 @@ public class RepairStatusController : ControllerBase
 {
 	private readonly IDataSource _dataSource;
 	private readonly ILogger<RepairStatusController> _logger;
+    private const string AuthCookie = "AutoTechCentr";
 
-	public RepairStatusController(IDataSource dataSource, ILogger<RepairStatusController> logger)
+    public RepairStatusController(IDataSource dataSource, ILogger<RepairStatusController> logger)
 	{
 		_dataSource = dataSource;
 		_logger = logger;
@@ -21,7 +23,15 @@ public class RepairStatusController : ControllerBase
 	{
 		try
 		{
-			var repairStatus = await _dataSource.ReadRepairStatus();
+				//var Test = HttpContext.Request.Cookies[AuthCookie];
+			//if (Test == null)
+			//{
+			//	return BadRequest(new
+			//	{
+			//		messg = "Вы не авторизованы?"
+			//	});
+			//}
+            var repairStatus = await _dataSource.ReadRepairStatus();
 			return Ok(repairStatus);
 		}
 		catch (Exception ex)

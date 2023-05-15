@@ -1,4 +1,6 @@
-﻿namespace ServiceBook.Db.SQLite;
+﻿using ServiceBook.Db.SQLite.Models;
+
+namespace ServiceBook.Db.SQLite;
 public interface IDataSource
 {
 	Task SaveRepairStatus(RepairStatus status);
@@ -7,4 +9,6 @@ public interface IDataSource
 
 	Task UserRegistration(string url, RegisterViewModel model);
 	Task ConfirmEmail(string userCode);
+
+	Task<string> SignIn(LoginViewModel model);
 }
