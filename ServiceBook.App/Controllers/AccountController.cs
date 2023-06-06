@@ -146,4 +146,20 @@ public class AccountController : ControllerBase
             return BadRequest(errorMsg);
         }
 	}
+
+    [HttpGet]
+    [Route("api/Account/GetInfoAboutUser")]
+    public async Task<IActionResult> GetUserInfo(string userCode)
+    {
+        try
+        {
+            var userInfo = await _dataSource.ReadUserInfo(userCode);
+            return Ok(userInfo);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"API {Request.Method}: {Request.Path} || Status Code Response: 400 || Exception: {ex.Message}");
+            return BadRequest(ex.Message);
+        }
+    }
 }

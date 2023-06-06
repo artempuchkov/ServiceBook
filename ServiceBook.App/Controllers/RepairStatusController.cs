@@ -19,19 +19,11 @@ public class RepairStatusController : ControllerBase
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> GetAll()
+	public async Task<IActionResult> GetAll(int? id = null)
 	{
 		try
 		{
-				//var Test = HttpContext.Request.Cookies[AuthCookie];
-			//if (Test == null)
-			//{
-			//	return BadRequest(new
-			//	{
-			//		messg = "Вы не авторизованы?"
-			//	});
-			//}
-            var repairStatus = await _dataSource.ReadRepairStatus();
+            var repairStatus = await _dataSource.ReadRepairStatus(id);
 			return Ok(repairStatus);
 		}
 		catch (Exception ex)

@@ -51,6 +51,80 @@ public class SQLiteDataSource : IDataSource
         var data = await _db.CreateConnection().QueryAsync<RepairStatus>(sql, new { IdRepairStatus = id }, commandTimeout: _sqlCommandTimeout);
         return data.ToArray();
     }
+    public async Task<ServiceModel[]> ReadService(int? id = null)
+    {
+
+        const string sql = @"
+			select
+				service_id as Id,
+				name as Name,
+                description as Description,
+                price as Price,
+                img as Img,
+                category as Category
+			from service
+			where @Id is null or service_id = @Id";
+        var data = await _db.CreateConnection().QueryAsync<ServiceModel>(sql, new { Id = id }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task<ServiceModel[]> ReadServiceSearch(string search)
+    {
+        const string sql = @"
+              select service_id as Id,
+				name as Name,
+                description as Description,
+                price as Price,
+                img as Img,
+                category as Category 
+                from service where lower(name) LIKE lower(@search)
+                or lower(description) LIKE lower(@search)
+                ";
+        var data = await _db.CreateConnection().QueryAsync<ServiceModel>(sql, new { search = search }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+
+    }
+    public async Task<ServiceModel[]> ReadByCategoryService(int category, int? service_id = null)
+    {
+        const string sql = @"
+            select 
+                service_id as Id,
+                name as Name,
+                description as Description,
+                price as Price,
+                img as Img,
+                category as Category
+            from service
+            where category = @Category and (@Id is null or service_id = @Id)";
+        var data = await _db.CreateConnection().QueryAsync<ServiceModel>(sql, new {Category = category, Id = service_id}, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task<CategoryModel[]> GetCategories(int? parent)
+    {
+        const string sql = @"
+            select 
+                category_id as Id,
+                category_name as Name,
+                parent_category as Parent,
+                image_url as ImageUrl
+            from category
+            where @Parent is null or parent_category = @Parent";
+        var data = await _db.CreateConnection().QueryAsync<CategoryModel>(sql, new { Parent = parent }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task<UserInfoModel[]> ReadUserInfo(string userCode)
+    {
+        var data = await _db.CreateConnection().QueryAsync<UserInfoModel>("select" +
+            " email as Email," +
+            " number_phone as PhoneNumber," +
+            " bonus_card as BonusCardId " +
+            "from user where user_code = @Code", new
+            {
+                Code = userCode
+            }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    
+
     public async Task<string> SignIn(LoginViewModel model)
     {
         var userCode = await _db.CreateConnection().QuerySingleAsync<string>("select user_code from user where email = @email and password = @password", new
