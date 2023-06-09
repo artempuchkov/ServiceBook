@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceBook.Db.SQLite;
+using ServiceBook.Db.SQLite.Models;
+using System.Reflection.Metadata;
 using System.Text.RegularExpressions;
 
 namespace ServiceBook.App.Controllers
@@ -12,7 +14,8 @@ namespace ServiceBook.App.Controllers
         private readonly IDataSource _dataSource;
         private readonly ILogger<ServiceController> _logger;
         private const string AuthCookie = "AutoTechCentr";
-        private const string vowels = "ауоыиэь";
+        private const string vowels = "аяуюеёыоыиэь";
+
 
         public ServiceController(IDataSource dataSource, ILogger<ServiceController> logger)
         {
@@ -56,17 +59,27 @@ namespace ServiceBook.App.Controllers
         [Route("api/Service/GetByNameOrDescription")]
         public async Task<IActionResult> GetByNameOrDescription(String searchString)
         {
-            searchString = searchString.Insert(0, "%");
-            searchString = searchString.Insert(searchString.Length, "%");
-            string res = searchString;
-            foreach (char vowel in vowels)
+            List<ServiceModel> services = new List<ServiceModel>();
+            string newString = searchString;
+            if (searchString.Length > 3)
+            for (var i = 0; i < vowels.Length; i++)
             {
-                searchString = searchString.Replace(vowel, '_');
+                newString = newString.Replace(vowels[i].ToString(), ".");
             }
             try
             {
-                var serviceByCategoryRead = await _dataSource.ReadServiceSearch(searchString);
-                return Ok(serviceByCategoryRead);
+                var serviceByCategoryRead = await _dataSource.ReadService();
+                for (int i = 0; i < serviceByCategoryRead.Length; i++)
+                {
+                    if (Regex.Match(serviceByCategoryRead[i].Name, newString, RegexOptions.IgnoreCase, Regex.InfiniteMatchTimeout).Success){
+                        services.Add(serviceByCategoryRead[i]);
+                    }
+                    else if (Regex.Match(serviceByCategoryRead[i].Description, newString, RegexOptions.IgnoreCase, Regex.InfiniteMatchTimeout).Success)
+                    {
+                        services.Add(serviceByCategoryRead[i]);
+                    }
+                }
+                return Ok(services);
             }
             catch (Exception ex)
             {

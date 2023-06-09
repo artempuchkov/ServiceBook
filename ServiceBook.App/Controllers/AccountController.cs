@@ -2,6 +2,8 @@ using System.Text.RegularExpressions;
 using ServiceBook.Db.SQLite;
 using Microsoft.AspNetCore.Mvc;
 using ServiceBook.Db.SQLite.Models;
+using Microsoft.AspNetCore.Authorization;
+using ServiceBook.TokenService;
 
 namespace ServiceBook.App.Controllers;
 
@@ -10,12 +12,14 @@ public class AccountController : ControllerBase
 {
 	private readonly IDataSource _dataSource;
 	private readonly ILogger<AccountController> _logger;
-	private const string AuthCookie = "AutoTechCentr";
+	private readonly TokenServices _tokenService;
 
-	public AccountController(IDataSource dataSource, ILogger<AccountController> logger)
+
+    public AccountController(IDataSource dataSource, ILogger<AccountController> logger, TokenServices tokenServices)
 	{
 		_dataSource = dataSource;
 		_logger = logger;
+		_tokenService = tokenServices;
 	}
 
 	[HttpGet]
@@ -111,15 +115,16 @@ public class AccountController : ControllerBase
 				ModelState.AddModelError("", "Поле \"Пароль\" не заполнено.");
 			if (ModelState.IsValid)
 			{
-				var userCode = await _dataSource.SignIn(model);
-				Response.Cookies.Append(AuthCookie, userCode);
-				var Test = HttpContext.Request.Cookies[AuthCookie];
+				var user = await _dataSource.SignIn(model);
+				var accesToken = _tokenService.CreateToken(user);
 
-                var msg = new
+				return Ok(new LoginResponse
 				{
-					message = "Вход выполнен.",
-				};
-				return Ok(msg);
+					FIO = user.UserName,
+					Email = user.Email,
+					Token = accesToken,
+				}
+					);
 			}
 			else
 			{
@@ -148,7 +153,7 @@ public class AccountController : ControllerBase
 	}
 
     [HttpGet]
-    [Route("api/Account/GetInfoAboutUser")]
+    [Route("api/Account/GetInfoAboutUser"), Authorize]
     public async Task<IActionResult> GetUserInfo(string userCode)
     {
         try

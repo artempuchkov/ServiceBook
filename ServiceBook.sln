@@ -13,7 +13,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "@Migrations", "@Migrations"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Db", "Db", "{EF2DAF00-7D03-4D29-9C0F-926DC1DE1F18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBook.EmailService", "ServiceBook.EmailService\ServiceBook.EmailService.csproj", "{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBook.EmailService", "ServiceBook.EmailService\ServiceBook.EmailService.csproj", "{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBook.TokenService", "ServiceBook.TokenService\ServiceBook.TokenService.csproj", "{8B12FD3C-595E-469D-AB53-35CABFFB78D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E628EF7A-C499-4A41-9C94-F45F0EBCBBE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B12FD3C-595E-469D-AB53-35CABFFB78D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B12FD3C-595E-469D-AB53-35CABFFB78D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B12FD3C-595E-469D-AB53-35CABFFB78D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B12FD3C-595E-469D-AB53-35CABFFB78D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

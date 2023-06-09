@@ -51,6 +51,34 @@ public class SQLiteDataSource : IDataSource
         var data = await _db.CreateConnection().QueryAsync<RepairStatus>(sql, new { IdRepairStatus = id }, commandTimeout: _sqlCommandTimeout);
         return data.ToArray();
     }
+    public async Task<WorkingModeModel[]> ReadWorkingMode(int? id = null)
+    {
+        const string sql = @" select 
+                                Id as Id,
+                                day as day,
+                                time_start as time_start,
+                                time_end as time_end
+                              from working_mode
+                              where @Id is null or id = @Id";
+        var data = await _db.CreateConnection().QueryAsync<WorkingModeModel>(sql, new { Id = id }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task SaveWorkingModel(WorkingModeModel model)
+    {
+        if (model == null)
+            return;
+
+        const string sql = @"
+			insert into working_mode (Id, day, time_start, time_end)
+				values (@Id, @day, @time_start, @time_end)
+			on conflict(id) do
+			update set
+				day = excluded.day,
+                time_start = excluded.time_start,
+                time_end = excluded.time_end;";
+
+        await _db.CreateConnection().ExecuteAsync(sql, model, commandTimeout: _sqlCommandTimeout);
+    }
     public async Task<ServiceModel[]> ReadService(int? id = null)
     {
 
@@ -66,6 +94,49 @@ public class SQLiteDataSource : IDataSource
 			where @Id is null or service_id = @Id";
         var data = await _db.CreateConnection().QueryAsync<ServiceModel>(sql, new { Id = id }, commandTimeout: _sqlCommandTimeout);
         return data.ToArray();
+    }
+    public async Task<ReceptionModel[]> ReadReception(int? id = null)
+    {
+        const string sqlReception = @"select
+                                        reception.id as Id,
+                                        reception.name as Name,
+                                        reception.capacity as Capacity,
+                                        master.fio as Master,
+                                        master.interval as Interval
+                                    from reception
+                                    join master on reception.master = master.id;";
+        var data = await _db.CreateConnection().QueryAsync<ReceptionModel>(sqlReception, new { Id = id }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task<MasterModel[]> ReadMaster(int? id = null)
+    {
+
+        const string sql = @"
+			select
+				id as Id,
+				fio as FIO,
+                interval as Interval,
+                phone as PhoneNumber
+			from master
+			where @Id is null or id = @Id";
+        var data = await _db.CreateConnection().QueryAsync<MasterModel>(sql, new { Id = id }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task SaveMaster(MasterModel model)
+    {
+        if (model == null)
+            return;
+
+        const string sql = @"
+			insert into master (id, fio, interval, phone)
+				values (@Id, @FIO, @Interval, @PhoneNumber)
+			on conflict(id) do
+			update set
+				fio = excluded.fio,
+                interval = excluded.interval,
+                phone = excluded.phone;";
+
+        await _db.CreateConnection().ExecuteAsync(sql, model, commandTimeout: _sqlCommandTimeout);
     }
     public async Task<ServiceModel[]> ReadServiceSearch(string search)
     {
@@ -125,25 +196,23 @@ public class SQLiteDataSource : IDataSource
     }
     
 
-    public async Task<string> SignIn(LoginViewModel model)
+    public async Task<UserIdentityModel> SignIn(LoginViewModel model)
     {
-        var userCode = await _db.CreateConnection().QuerySingleAsync<string>("select user_code from user where email = @email and password = @password", new
+        var user = await _db.CreateConnection().QuerySingleAsync<UserIdentityModel>("select user_code as Id, " +
+            "fio as UserName, email as Email," +
+            "confirm_email as confirm from user where email = @email and password = @password", new
         {
             email = model.Email,
             password = model.Password.GetMd5Hash()
         }, commandTimeout: _sqlCommandTimeout);
 
-        if (String.IsNullOrEmpty(userCode))
+        if (user == null)
             throw new Exception("Неверен логин или пароль.");
 
-        var confirmed = await _db.CreateConnection().QuerySingleAsync<int>("select confirm_email from user where user_code = @user_code", new
-        {
-            user_code = userCode
-        }, commandTimeout: _sqlCommandTimeout);
-        if (confirmed == 0)
+        if (user.Confirm == 0)
             throw new Exception("Необходимо подтвердить e-mail");
 
-        return userCode;
+        return user;
 
 
     }
