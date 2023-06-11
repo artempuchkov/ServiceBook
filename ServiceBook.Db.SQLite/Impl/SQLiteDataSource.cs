@@ -6,6 +6,8 @@ using System.Web;
 using Org.BouncyCastle.Math.EC.Rfc7748;
 using ServiceBook.Db.SQLite.Models;
 using System.Linq;
+using MimeKit.Cryptography;
+using Microsoft.Data.SqlClient;
 
 namespace ServiceBook.Db.SQLite;
 public class SQLiteDataSource : IDataSource
@@ -194,8 +196,74 @@ public class SQLiteDataSource : IDataSource
             }, commandTimeout: _sqlCommandTimeout);
         return data.ToArray();
     }
-    
+    public async Task RepairRequest(RequestUserModel model)
+    {
 
+        const string sql = @"insert into repair_request (date_request, description, car_id, user_id)
+				values (@date_request, @description, @car_id, @user_id);";
+        await _db.CreateConnection().ExecuteAsync(sql, new
+        {
+            date_request = model.date_request,
+            description = model.description,
+            car_id = model.car_id,
+            user_id = model.user_id    
+        }, commandTimeout: _sqlCommandTimeout);
+    }
+    public async Task<RequestAdminModel[]> GetRequests(int? user_id = null)
+    {
+        const string sqlReception = @"select
+                                        repair_request.id as id,
+                                        repair_request.date_request as date_request,
+                                        repair_request.description as description,
+                                        repair_request.car_id as vin,
+                                        car.brand as brand,
+                                        car.model as model,
+                                        user.fio as fio,
+                                        user.number_phone as number_phone
+                                    from repair_request
+                                    join car on repair_request.car_id = car.vin
+                                    join user on repair_request.user_id = user.user_id
+                                    where @id is null or repair_request.user_id = @id;";
+        var data = await _db.CreateConnection().QueryAsync<RequestAdminModel>(sqlReception, new { Id = user_id }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task<DateTime[]> GetRequestTimes()
+    {
+        const string sql = @"select 
+                                date_request as date
+                            from repair_request";
+        var data = await _db.CreateConnection().QueryAsync<DateTime>(sql, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task<CarModel[]> ReadCar(int? user_id)
+    {
+        var data = await _db.CreateConnection().QueryAsync<CarModel>("select" +
+            " vin as vin," +
+            " brand as brand," +
+            " model as model, " +
+            "release_year as release_year," +
+            "state_number as state_number,"+
+            "user_id as user_id "+
+            "from car where @user_id is null or user_id = @user_id", new
+            {
+                user_id = user_id
+            }, commandTimeout: _sqlCommandTimeout);
+        return data.ToArray();
+    }
+    public async Task AddCar(CarModel model)
+    {
+        const string sql = @"insert into car (vin, brand, model, release_year, state_number, user_id)
+				values (@vin, @brand, @model, @release_year, @state_number, @user_id);";
+        await _db.CreateConnection().ExecuteAsync(sql, new
+        {
+            vin = model.vin,
+            brand = model.brand,
+            model = model.model,
+            release_year = model.release_year,
+            state_number = model.state_number, 
+            user_id = model.user_id
+        }, commandTimeout: _sqlCommandTimeout);
+    }
     public async Task<UserIdentityModel> SignIn(LoginViewModel model)
     {
         var user = await _db.CreateConnection().QuerySingleAsync<UserIdentityModel>("select user_code as Id, " +

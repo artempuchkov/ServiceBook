@@ -12,6 +12,6 @@ namespace ServiceBook.Db.SQLite.Models
         public string Name { get; set; }
         public int Capacity { get; set; }
         public string Master { get; set; }
-        public string Interval { get; set; }
+        public int Interval { get; set; }
     }
 }

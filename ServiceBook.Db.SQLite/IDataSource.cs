@@ -22,4 +22,13 @@ public interface IDataSource
 	Task<ReceptionModel[]> ReadReception(int? id = null);
 	Task SaveMaster(MasterModel model);
 	Task<MasterModel[]> ReadMaster(int? id = null);
+
+	Task RepairRequest(RequestUserModel model);
+	Task<RequestAdminModel[]> GetRequests(int? user_id = null);
+
+
+    Task<CarModel[]> ReadCar(int? user_id);
+	Task AddCar(CarModel model);
+
+	Task<DateTime[]> GetRequestTimes();
 }

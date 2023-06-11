@@ -9,10 +9,10 @@ namespace ServiceBook.App.Controllers
     public class WorkingController : Controller
     {
         private readonly IDataSource _dataSource;
-        private readonly ILogger<RepairStatusController> _logger;
+        private readonly ILogger<WorkingController> _logger;
         private const string AuthCookie = "AutoTechCentr";
 
-        public WorkingController(IDataSource dataSource, ILogger<RepairStatusController> logger)
+        public WorkingController(IDataSource dataSource, ILogger<WorkingController> logger)
         {
             _dataSource = dataSource;
             _logger = logger;
@@ -63,12 +63,11 @@ namespace ServiceBook.App.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("api/WorkingMode/UpdateWorkingMode{id}")]
-        public async Task<IActionResult> UpdateWorkingMode([FromRoute] int id, [FromBody] WorkingModeModel model)
+        [HttpPut("api/WorkingMode/UpdateWorkingMode")]
+        public async Task<IActionResult> UpdateWorkingMode([FromBody] WorkingModeModel model)
         {
             try
             {
-                model.Id = id;
                 await _dataSource.SaveWorkingModel(model);
                 return Ok();
             }
@@ -78,12 +77,11 @@ namespace ServiceBook.App.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpPut("api/WorkingMode/UpdateMaster{id}")]
-        public async Task<IActionResult> UpdateMaster([FromRoute] int id, [FromBody] MasterModel model)
+        [HttpPut("api/WorkingMode/UpdateMaster")]
+        public async Task<IActionResult> UpdateMaster([FromBody] MasterModel model)
         {
             try
             {
-                model.Id = id;
                 await _dataSource.SaveMaster(model);
                 return Ok();
             }
